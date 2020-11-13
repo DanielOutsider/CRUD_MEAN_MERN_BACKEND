@@ -8,21 +8,29 @@ require('dotenv').config();
 //crea el servidor en express
 const app = express();
 
-// base de datos
-dbConnection();
-
 // configuramos CORS
 // USE = se usa para definir  un middleware
 app.use( cors() );
 
+// lectura y parseo de body = request de datos
+app.use( express.json() );
+
+// base de datos
+dbConnection();
+
+
 
 // rutas
-app.get('/',(req, res) =>{
-    res.json({
-        ok: true,
-        msg: 'hola mundo'
-    })
-});
+app.use( '/api/usuarios', require('./routes/usuarios.routes') );
+
+
+// app.get('/',(req, res) =>{
+//     res.json({
+//         ok: true,
+//         msg: 'hola mundo'
+//     })
+// });
+
 
 // selecciono el puerto en el q va a correr
 app.listen(process.env.PORT,()=>{
