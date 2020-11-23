@@ -29,4 +29,11 @@ const UsuarioSchema = Schema({
     }
 });
 
+// ocultamos los valores que no quieren que se retornen
+UsuarioSchema.method('toJSON', function(){
+    const { __v, _id, password, ...Object } = this.toObject();
+    Object.uid = _id;
+    return Object
+});
+
 module.exports = model( 'Usuario', UsuarioSchema );

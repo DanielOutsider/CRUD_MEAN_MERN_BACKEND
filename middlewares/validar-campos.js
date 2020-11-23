@@ -21,5 +21,4 @@ const validarCampos = (req, res = response, next ) => {
 
 // se declara para pueda usarse externamente
 module.exports = { 
-    validarCampos
-}
+    validarCampos }
