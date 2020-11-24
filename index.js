@@ -22,7 +22,7 @@ dbConnection();
 
 // rutas
 app.use( '/api/usuarios', require('./routes/usuarios.routes') );
-
+app.use( '/api/auth', require('./routes/auth.routes') );
 
 // app.get('/',(req, res) =>{
 //     res.json({

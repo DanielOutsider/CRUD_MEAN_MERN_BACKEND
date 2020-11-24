@@ -2,6 +2,7 @@ const { response } = require('express');
 const bcryptjs = require('bcryptjs');
 
 const Usuario = require('../models/usuario.model');
+const { generarJWT } = require('../helpers/jwt');
 
 const getUsuarios = async(req, res) =>{
 
@@ -38,9 +39,11 @@ const crearUsuario = async(req, res = response) =>{
             // guarda usuario
             await usuario.save();
 
+            const token = await generarJWT( usuario.id);
+
             status = 'success';
             alert = 'usuario registrado';
-            response = usuario;
+            response = { 'usuario' : usuario, 'token': token };
         }
         
     } catch (error) {
@@ -78,7 +81,11 @@ const actualizarUsuario = async(req, res = response) =>{
         }else{
 
             // Actualiza
-            const campos = req.body;
+            const { password, google, ...campos } = req.body;
+            // la linea anterior hace lo mismo 
+            // elimina los campos que no queremos actualizar si el usuario lo envia
+            // delete campos.password;
+            // delete campos.google;
 
             if ( usuarioDB.email === campos.email ){
                 delete campos.email;
@@ -90,9 +97,7 @@ const actualizarUsuario = async(req, res = response) =>{
                 }
             }
 
-            // elimina los campos que no queremos actualizar si el usuario lo envia
-            delete campos.password;
-            delete campos.google;
+            
 
             if ( existEmail == true ){
                 // guarda los cambios y retorna el registro actualizado
@@ -125,9 +130,51 @@ const actualizarUsuario = async(req, res = response) =>{
     
 }
 
+const borrarUsuario = async(req, res = response) =>{
+    
+    var status = '';
+    var alert = '';
+    var response = '';
+  
+    try {
+
+        // validar si el usuario es el de la sesion
+        const uid = req.params.id;
+
+        const usuarioDB = await Usuario.findById( uid );
+
+        if ( !usuarioDB ){
+
+            status = 'error';
+            alert = 'usuario no existe';
+
+        }else{
+
+            await Usuario.findOneAndDelete( uid );
+
+            status = 'success';
+            alert = 'usuario eliminado';
+            
+        }
+        
+    } catch (error) {
+        console.log(error);
+        status = 'error';
+        alert = error;
+    }finally{
+        res.json({
+            status: status,
+            alert: alert,
+            response: response
+        })
+    }
+    
+}
+
 
 module.exports = {
     getUsuarios,
     crearUsuario,
-    actualizarUsuario
+    actualizarUsuario,
+    borrarUsuario
 }
