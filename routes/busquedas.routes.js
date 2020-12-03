@@ -1,5 +1,5 @@
 /**
- *      /api/todo/:busqueda
+ *      /api/todo/
  */
 
 const { Router } = require('express');
@@ -9,10 +9,11 @@ const { validarJWT } = require('../middlewares/validar-jwt');
 // check es un middleware, uno puede crear uno personalizado
 
 
-const { getBusquedas } = require('../controllers/busquedas.controller');
+const { getBusquedas, getDocumentosColeccion } = require('../controllers/busquedas.controller');
 const router = Router();
 
 router.get('/:busqueda', validarJWT, getBusquedas);
+router.get('/coleccion/:tabla/:busqueda', validarJWT, getDocumentosColeccion);
 
 
 
